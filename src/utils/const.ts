@@ -101,3 +101,32 @@ export const data_topic = [
     name: "Topics",
   },
 ];
+export const data_stream = [
+  {
+    id: "1",
+    name: "Lifestyle",
+    img: require("../assets/home/stream.png"),
+    avatar: require("../assets/home/stream_avatar.png"),
+    play: require("../assets/home/play.png"),
+    view: "1.5Mviews",
+    btn: "1 min ago",
+  },
+  {
+    id: "2",
+    name: "Lifestyle",
+    img: require("../assets/home/stream2.png"),
+    avatar: require("../assets/home/stream_avatar.png"),
+    play: require("../assets/home/play.png"),
+    view: "1.5Mviews",
+    btn: "1 min ago",
+  },
+  {
+    id: "3",
+    name: "Lifestyle",
+    img: require("../assets/home/stream3.png"),
+    avatar: require("../assets/home/stream_avatar.png"),
+    play: require("../assets/home/play.png"),
+    view: "1.5Mviews",
+    btn: "1 min ago",
+  },
+];
