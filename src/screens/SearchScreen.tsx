@@ -16,6 +16,40 @@ export default function App({ navigation }) {
   const [result, setResult] = useState([]);
   const [keyword, setKeyword] = useState();
 
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`http://192.168.1.140:3000/search`);
+      setResult(response.data);
+    } catch (error) {
+      console.log("Lỗi khi search", error);
+      Alert.alert("Lỗi khi search ", error.message);
+    }
+  };
+
+  const fetchDataSearch = async (keyword) => {
+    try {
+      const response = await axios.get(
+        "http://192.168.1.140:3000/searchKeyWord",
+        {
+          params: { keyword },
+        }
+      );
+      setResult(response.data);
+    } catch (error) {
+      console.log("Lỗi khi tìm kiếm", error);
+      Alert.alert("Lỗi khi tìm kiếm", error.message);
+    }
+  };
+
+  const handleSearch = (text) => {
+    setKeyword(text);
+    fetchDataSearch(text);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <View style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.head}>
@@ -25,6 +59,7 @@ export default function App({ navigation }) {
             textContentType="search"
             placeholder="search ..."
             value={keyword}
+            onChangeText={handleSearch}
           />
           <Icon
             name="close"
