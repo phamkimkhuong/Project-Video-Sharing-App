@@ -4,7 +4,6 @@ import {
   StyleSheet,
   Image,
   Pressable,
-  ScrollView,
   FlatList,
   ImageBackground,
 } from "react-native";
@@ -106,7 +105,7 @@ const Item4 = ({ obj }: { obj: any }) => (
 const HomeScreen = () => {
   const navigation = useNavigation();
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.header}>
           <Image source={require("../assets/home/logo.png")} />
@@ -185,7 +184,7 @@ const HomeScreen = () => {
           contentContainerStyle={styles.streaming2}
         />
       </View>
-    </ScrollView>
+    </View>
   );
 };
 const styles = StyleSheet.create({
@@ -296,16 +295,3 @@ const styles = StyleSheet.create({
   },
 });
 export default HomeScreen;
-
-// import React from 'react';
-// import { View, Text } from 'react-native';
-
-// const HomeScreen = () => {
-//   return (
-//     <View>
-//       <Text>HomeScreen</Text>
-//     </View>
-//   );
-// }
-
-// export default HomeScreen;
