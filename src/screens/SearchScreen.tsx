@@ -71,7 +71,13 @@ export default function App({ navigation }) {
               padding: 10,
               position: "relative",
             }}
-            onPress={() => navigation.navigate("VideoDetails", {})}
+            onPress={() =>
+              navigation.navigate("VideoDetails", {
+                // idPost: item.idPost,
+                // idUser: item.idUser,
+                // avatar: item.avatar,
+              })
+            }
           >
             <Image
               source={{
@@ -111,7 +117,7 @@ export default function App({ navigation }) {
         }}
       />
 
-      <TouchableOpacity style={{}}>
+      <TouchableOpacity style={styles.showmore}>
         <Text style={{ color: "#FF1493" }}>Show more</Text>
         <Icon
           style={{ color: "#FF1493" }}
@@ -121,9 +127,99 @@ export default function App({ navigation }) {
         />
       </TouchableOpacity>
 
-      <Text style={{}}>Maybe you're interesting</Text>
+      <Text style={styles.maybe}>Maybe you're interesting</Text>
 
-      <View style={{}}></View>
+      <View style={styles.sussgestion}>
+        <TouchableOpacity
+          style={{
+            backgroundColor: "#BFEFFF",
+            padding: 10,
+            borderRadius: 20,
+            margin: 10,
+          }}
+        >
+          <Text style={{ color: "#87CEFF", fontSize: 15 }}>
+            Funny momment of pet
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            backgroundColor: "#BFEFFF",
+            padding: 10,
+            borderRadius: 20,
+            margin: 10,
+          }}
+        >
+          <Text style={{ color: "#87CEFF", fontSize: 15 }}>Cats</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            backgroundColor: "#BFEFFF",
+            padding: 10,
+            borderRadius: 20,
+            margin: 10,
+          }}
+        >
+          <Text style={{ color: "#87CEFF", fontSize: 15 }}>Dogs</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            backgroundColor: "#BFEFFF",
+            padding: 10,
+            borderRadius: 20,
+            margin: 10,
+          }}
+        >
+          <Text style={{ color: "#87CEFF", fontSize: 15 }}>Food for pet</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            backgroundColor: "#BFEFFF",
+            padding: 10,
+            borderRadius: 20,
+            margin: 10,
+          }}
+        >
+          <Text style={{ color: "#87CEFF", fontSize: 15 }}>Vet Center</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    paddingTop: 40,
+  },
+  head: {
+    flexDirection: "row",
+    padding: 10,
+    alignItems: "center",
+  },
+  input: {
+    backgroundColor: "#E8E8E8",
+    flexDirection: "row",
+    flex: 1,
+    padding: 10,
+    borderRadius: 5,
+  },
+  showmore: {
+    alignSelf: "center",
+    flexDirection: "row",
+    padding: 10,
+    paddingBottom: 30,
+  },
+  sussgestion: {
+    paddingHorizontal: 10,
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  maybe: {
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+});
