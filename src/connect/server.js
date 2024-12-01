@@ -1,33 +1,21 @@
 const express = require("express");
-const mssql = require("mssql");
+const mysql = require("mysql");
 const cors = require("cors");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Cấu hình kết nối với MSSQL
+// Cấu hình kết nối với MySQL
 const config = {
-  user: "sa",
-  password: "123",
-  server: "localhost",
-  database: "VideoSharingApp",
-  options: {
-    encrypt: true,
-    trustServerCertificate: true,
-  },
+  host: "192.168.1.8",
+  user: "root",
+  password: "",
+  database: "db_videosharingapp",
 };
 
-// Kết nối MSSQL
-mssql
-  .connect(config)
-  .then((pool) => {
-    console.log("Connected to MSSQL");
-    app.locals.db = pool;
-  })
-  .catch((err) => {
-    console.log("Failed to connect to MSSQL", err);
-  });
+// Kết nối MySQL
+const pool = mysql.createPool(config);
 
 // API Endpoint để lấy danh sách người dùng
 app.get("/account", async (req, res) => {
@@ -54,7 +42,7 @@ app.get("/data", async (req, res) => {
     const pool = req.app.locals.db;
     const result = await pool
       .request()
-      .input("id", mssql.Int, id)
+      .input("id", mysql.Int, id)
       .query(`select * from Users where idUser= @id`);
     res.json(result.recordset);
   } catch (err) {
@@ -73,7 +61,7 @@ app.get("/follow", async (req, res) => {
   }
   try {
     const pool = req.app.locals.db;
-    const result = await pool.request().input("id", mssql.Int, id).query(`
+    const result = await pool.request().input("id", mysql.Int, id).query(`
         SELECT 
           SUM(CASE WHEN f.id_following = @id THEN 1 ELSE 0 END) AS following_count,
           SUM(CASE WHEN f.id_followed = @id THEN 1 ELSE 0 END) AS followers_count
@@ -96,7 +84,7 @@ app.get("/followed", async (req, res) => {
   }
   try {
     const pool = req.app.locals.db;
-    const result = await pool.request().input("id", mssql.Int, id).query(`
+    const result = await pool.request().input("id", mysql.Int, id).query(`
         SELECT f.id_following, u.*
         FROM Follow f
         INNER JOIN Users u ON u.idUser = f.id_following
@@ -119,7 +107,7 @@ app.get("/following", async (req, res) => {
   }
   try {
     const pool = req.app.locals.db;
-    const result = await pool.request().input("id", mssql.Int, id).query(`
+    const result = await pool.request().input("id", mysql.Int, id).query(`
         SELECT f.id_followed, u.*
         FROM Follow f
         INNER JOIN Users u ON u.idUser = f.id_followed
@@ -142,7 +130,7 @@ app.get("/profilevideos", async (req, res) => {
   }
   try {
     const pool = req.app.locals.db;
-    const result = await pool.request().input("id", mssql.Int, id).query(`
+    const result = await pool.request().input("id", mysql.Int, id).query(`
         SELECT p.url, p.idPost, u.idUser, u.avatar FROM Post p INNER JOIN Users u
         ON p.idUser = u.idUser WHERE p.type= 'video' AND p.idUser = @id
       `);
@@ -163,7 +151,7 @@ app.get("/profileimages", async (req, res) => {
   }
   try {
     const pool = req.app.locals.db;
-    const result = await pool.request().input("id", mssql.Int, id).query(`
+    const result = await pool.request().input("id", mysql.Int, id).query(`
         SELECT p.url, p.idPost, u.idUser, u.avatar FROM Post p INNER JOIN Users u
         ON p.idUser = u.idUser WHERE p.type= 'image' AND p.idUser = @id
       `);
@@ -227,7 +215,7 @@ app.get("/profilevideos", async (req, res) => {
   const { id } = req.query;
   try {
     const pool = req.app.locals.db;
-    const result = await pool.request().input("id", mssql.Int, id).query(`
+    const result = await pool.request().input("id", mysql.Int, id).query(`
         select p.url from Post p inner join Users u
         on p.idUser = u.idUser where p.type= 'video' and p.idUser = @id
         ORDER BY p.idPost DESC;
@@ -246,7 +234,7 @@ app.get("/videoDetails", async (req, res) => {
     const pool = req.app.locals.db;
     const result = await pool
       .request()
-      .input("id", mssql.Int, id)
+      .input("id", mysql.Int, id)
       .query(`select * from Post where idPost = @id`);
     res.json(result.recordset);
   } catch (err) {
@@ -265,7 +253,7 @@ app.get("/comment", async (req, res) => {
 
   try {
     const pool = req.app.locals.db;
-    const result = await pool.request().input("id", mssql.Int, parsedId).query(`
+    const result = await pool.request().input("id", mysql.Int, parsedId).query(`
         select c.text, c.time, u.avatar, u.username
         from Comment c
         inner join Post p on c.idPost = p.idPost 
@@ -290,7 +278,7 @@ app.get("/commentCount", async (req, res) => {
 
   try {
     const pool = req.app.locals.db;
-    const result = await pool.request().input("id", mssql.Int, parsedId).query(`
+    const result = await pool.request().input("id", mysql.Int, parsedId).query(`
         SELECT COUNT(*) AS comment_count FROM Comment WHERE idPost = @id
       `);
 
@@ -311,7 +299,7 @@ app.get("/likeCount", async (req, res) => {
 
   try {
     const pool = req.app.locals.db;
-    const result = await pool.request().input("id", mssql.Int, parsedId).query(`
+    const result = await pool.request().input("id", mysql.Int, parsedId).query(`
         		SELECT COUNT(*) AS like_count FROM [Like] WHERE idPost = @id;
       `);
 
@@ -335,10 +323,10 @@ app.post("/savePost", async (req, res) => {
     const pool = req.app.locals.db;
     const result = await pool
       .request()
-      .input("idUser", mssql.Int, idUser)
-      .input("type", mssql.NVarChar, type)
-      .input("url", mssql.NVarChar, url)
-      .input("content", mssql.NVarChar, content).query(`
+      .input("idUser", mysql.Int, idUser)
+      .input("type", mysql.NVarChar, type)
+      .input("url", mysql.NVarChar, url)
+      .input("content", mysql.NVarChar, content).query(`
         INSERT INTO dbo.Post (idUser, type, url, content, upload_at)
         VALUES (@idUser, @type, @url, @content, GETDATE())
       `);
@@ -374,12 +362,12 @@ app.put("/updateProfile", async (req, res) => {
 
     const result = await pool
       .request()
-      .input("idUser", mssql.Int, idUser)
-      .input("username", mssql.NVarChar, username)
-      .input("avatar", mssql.NVarChar, avatar)
-      .input("sdt", mssql.NVarChar, sdt)
-      .input("email", mssql.NVarChar, email)
-      .input("birthDay", mssql.DateTime, new Date(birthDay))
+      .input("idUser", mysql.Int, idUser)
+      .input("username", mysql.NVarChar, username)
+      .input("avatar", mysql.NVarChar, avatar)
+      .input("sdt", mysql.NVarChar, sdt)
+      .input("email", mysql.NVarChar, email)
+      .input("birthDay", mysql.DateTime, new Date(birthDay))
       .query(query);
 
     if (result.rowsAffected[0] > 0) {
@@ -407,9 +395,9 @@ app.post("/insertComment", async (req, res) => {
     const pool = req.app.locals.db;
     const result = await pool
       .request()
-      .input("idUser", mssql.Int, idUser)
-      .input("idPost", mssql.Int, idPost)
-      .input("text", mssql.NVarChar, text).query(`
+      .input("idUser", mysql.Int, idUser)
+      .input("idPost", mysql.Int, idPost)
+      .input("text", mysql.NVarChar, text).query(`
         INSERT INTO dbo.Comment (idUser, idPost, text, time)
         VALUES (@idUser, @idPost, @text, GETDATE())
       `);
@@ -434,14 +422,14 @@ app.post("/register", async (req, res) => {
 
   try {
     const pool = req.app.locals.db;
-    const transaction = new mssql.Transaction(pool);
+    const transaction = new mysql.Transaction(pool);
     await transaction.begin();
 
     const request = transaction.request();
     const resultUser = await request
-      .input("username", mssql.NVarChar, username)
-      .input("sdt", mssql.NVarChar, sdt)
-      .input("email", mssql.NVarChar, email + "@gmail.com").query(`
+      .input("username", mysql.NVarChar, username)
+      .input("sdt", mysql.NVarChar, sdt)
+      .input("email", mysql.NVarChar, email + "@gmail.com").query(`
         INSERT INTO Users (username, sdt, email, avatar, birthDay)
         OUTPUT inserted.idUser
         VALUES (@username, @sdt, @email, 'https://res-academy.cache.wpscdn.com/images/b1bc87981be4dc512c611e408ce6bbb2.png', GETDATE())
@@ -449,9 +437,9 @@ app.post("/register", async (req, res) => {
 
     const idUser = resultUser.recordset[0].idUser;
     await request
-      .input("idUser", mssql.Int, idUser)
-      .input("accname", mssql.NVarChar, accname)
-      .input("pass", mssql.NVarChar, pass).query(`
+      .input("idUser", mysql.Int, idUser)
+      .input("accname", mysql.NVarChar, accname)
+      .input("pass", mysql.NVarChar, pass).query(`
         INSERT INTO Account (idUser, username, pass)
         VALUES (@idUser, @accname, @pass)
       `);
@@ -485,8 +473,8 @@ app.get("/is-following", async (req, res) => {
     const pool = req.app.locals.db;
     const result = await pool
       .request()
-      .input("id_following", mssql.Int, parseInt(id_following))
-      .input("id_followed", mssql.Int, parseInt(id_followed)).query(`
+      .input("id_following", mysql.Int, parseInt(id_following))
+      .input("id_followed", mysql.Int, parseInt(id_followed)).query(`
         SELECT COUNT(*) AS is_following
         FROM Follow
         WHERE id_following = @id_following AND id_followed = @id_followed;
@@ -509,8 +497,8 @@ app.post("/follow", async (req, res) => {
     const pool = req.app.locals.db;
     const result = await pool
       .request()
-      .input("idFollowing", mssql.Int, parseInt(idFollowing))
-      .input("idFollowed", mssql.Int, parseInt(idFollowed)).query(`
+      .input("idFollowing", mysql.Int, parseInt(idFollowing))
+      .input("idFollowed", mysql.Int, parseInt(idFollowed)).query(`
               INSERT INTO Follow (id_following, id_followed)
               VALUES (@idFollowing, @idFollowed)
           `);
@@ -528,8 +516,8 @@ app.delete("/unfollow", async (req, res) => {
     const pool = req.app.locals.db;
     const result = await pool
       .request()
-      .input("idFollowing", mssql.Int, parseInt(idFollowing))
-      .input("idFollowed", mssql.Int, parseInt(idFollowed)).query(`
+      .input("idFollowing", mysql.Int, parseInt(idFollowing))
+      .input("idFollowed", mysql.Int, parseInt(idFollowed)).query(`
               DELETE FROM Follow
               WHERE id_following = @idFollowing AND id_followed = @idFollowed
           `);
@@ -552,8 +540,8 @@ app.get("/is-like", async (req, res) => {
     const pool = req.app.locals.db;
     const result = await pool
       .request()
-      .input("idPost", mssql.Int, parseInt(idPost))
-      .input("idUser", mssql.Int, parseInt(idUser)).query(`
+      .input("idPost", mysql.Int, parseInt(idPost))
+      .input("idUser", mysql.Int, parseInt(idUser)).query(`
         SELECT COUNT(*) AS is_like
         FROM [Like]
         WHERE idPost = @idPost AND idUser = @idUser;
@@ -575,8 +563,8 @@ app.post("/like", async (req, res) => {
     const pool = req.app.locals.db;
     const result = await pool
       .request()
-      .input("idUser", mssql.Int, idUser)
-      .input("idPost", mssql.Int, idPost)
+      .input("idUser", mysql.Int, idUser)
+      .input("idPost", mysql.Int, idPost)
       .query(`INSERT INTO [Like] (idUser, idPost) VALUES (@idUser, @idPost)`);
 
     res.status(200).send({ message: "Liked successfully" });
@@ -592,8 +580,8 @@ app.post("/unlike", async (req, res) => {
     const pool = req.app.locals.db;
     const result = await pool
       .request()
-      .input("idUser", mssql.Int, idUser)
-      .input("idPost", mssql.Int, idPost)
+      .input("idUser", mysql.Int, idUser)
+      .input("idPost", mysql.Int, idPost)
       .query(`DELETE FROM [Like] WHERE idUser = @idUser AND idPost = @idPost`);
 
     res.status(200).send({ message: "Unliked successfully" });
@@ -639,7 +627,7 @@ app.get("/searchKeyWord", async (req, res) => {
     const pool = req.app.locals.db;
     const result = await pool
       .request()
-      .input("keyword", mssql.NVarChar, `%${keyword}%`).query(`
+      .input("keyword", mysql.NVarChar, `%${keyword}%`).query(`
         SELECT * FROM Post p
         INNER JOIN Users u ON p.idUser = u.idUser
         WHERE (p.content LIKE @keyword OR u.username LIKE @keyword)
@@ -671,7 +659,7 @@ app.get("/suggest", async (req, res) => {
   const { id } = req.query;
   try {
     const pool = req.app.locals.db;
-    const result = await pool.request().input("id", mssql.Int, id).query(`
+    const result = await pool.request().input("id", mysql.Int, id).query(`
         SELECT top 3 u.* FROM Users u WHERE u.idUser != @id
         AND NOT EXISTS (
             SELECT 1 
