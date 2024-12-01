@@ -1,5 +1,7 @@
 export const PRIMARY_COLOR = "#f44b87";
 
+export const serverURL = "http://192.168.1.8:3000";
+
 export const data_avatar = [
   {
     id: "1",
@@ -202,7 +204,7 @@ export const data_audio = [
     img: require("../assets/audio/img/audio_img10.jpg"),
     duration: "1:05",
   },
-]
+];
 
 export const data_filter = [
   {
@@ -255,4 +257,4 @@ export const data_filter = [
     name: "Dynamic Neon Glow",
     img: require("../assets/filter/img/filter_img10.jpg"),
   },
-]
+];

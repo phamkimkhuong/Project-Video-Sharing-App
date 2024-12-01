@@ -6,17 +6,25 @@ import {
   Pressable,
   FlatList,
   ImageBackground,
+  Alert,
 } from "react-native";
 import React from "react";
-import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, RouteProp } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useState, useEffect } from "react";
 import Entypo from "@expo/vector-icons/Entypo";
+import axios from "axios";
 import {
   data_avatar,
   data_video,
   data_topic,
   data_stream,
+  serverURL,
 } from "../utils/const";
+type Props = {
+  navigation: NavigationProp<any>;
+  route: RouteProp<any>;
+};
 
 const Item = ({ obj }: { obj: any }) => (
   <Pressable
@@ -101,9 +109,46 @@ const Item4 = ({ obj }: { obj: any }) => (
     </View>
   </Pressable>
 );
+const HomeScreen: React.FC<Props> = ({ navigation, route }: Props) => {
+  const user = route.params?.userData ?? {};
+  const [images, setImages] = useState<any[]>([]);
+  const [stories, setStory] = useState<any[]>([]);
+  const [user1, setUser] = useState<any[]>([]);
+  const fetchDataUser = async () => {
+    try {
+      const response = await axios.get(`${serverURL}/data?id=${user.idUser}`);
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        setUser(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching video data:", error);
+    }
+  };
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`${serverURL}/imageStreaming4`);
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        setImages(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching video data:", error);
+    }
+  };
 
-const HomeScreen = () => {
-  const navigation = useNavigation();
+  const fetchStories = async () => {
+    try {
+      const response = await axios.get(`${serverURL}/Userstories`);
+      setStory(response.data);
+    } catch (error) {
+      console.error("Error fetching stories:", error);
+      Alert.alert("Lỗi", "Không thể lấy danh sách story");
+    }
+  };
+  useEffect(() => {
+    fetchDataUser();
+    fetchData();
+    fetchStories();
+  }, []);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
