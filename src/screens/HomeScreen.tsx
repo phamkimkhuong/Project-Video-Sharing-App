@@ -7,6 +7,8 @@ import {
   FlatList,
   ImageBackground,
   Alert,
+  SafeAreaView,
+  TouchableOpacity,
 } from "react-native";
 import React from "react";
 import { NavigationProp, RouteProp } from "@react-navigation/native";
@@ -44,7 +46,7 @@ const Item = ({ obj }: { obj: any }) => (
     </View>
   </Pressable>
 );
-const Item2 = ({ obj }: { obj: any }) => (
+const ItemTopTrending = ({ obj }: { obj: any }) => (
   <Pressable
     style={({ pressed }: { pressed: boolean }) => [
       styles.pressable,
@@ -56,7 +58,7 @@ const Item2 = ({ obj }: { obj: any }) => (
     </View>
   </Pressable>
 );
-const Item3 = ({ obj }: { obj: any }) => (
+const ItemBrowseTopic = ({ obj }: { obj: any }) => (
   <Pressable
     style={({ pressed }: { pressed: boolean }) => [
       styles.pressable,
@@ -69,7 +71,7 @@ const Item3 = ({ obj }: { obj: any }) => (
     </View>
   </Pressable>
 );
-const Item4 = ({ obj }: { obj: any }) => (
+const ItemStream = ({ obj }: { obj: any }) => (
   <Pressable
     style={({ pressed }: { pressed: boolean }) => [
       styles.pressable,
@@ -109,26 +111,29 @@ const Item4 = ({ obj }: { obj: any }) => (
     </View>
   </Pressable>
 );
+
 const HomeScreen: React.FC<Props> = ({ navigation, route }: Props) => {
   const user = route.params?.userData ?? {};
   const [images, setImages] = useState<any[]>([]);
   const [stories, setStory] = useState<any[]>([]);
   const [user1, setUser] = useState<any[]>([]);
-  const fetchDataUser = async () => {
+
+  const fetchData = async () => {
     try {
-      const response = await axios.get(`${serverURL}/data?id=${user.idUser}`);
+      const response = await axios.get(`${serverURL}/imageStreaming4`);
       if (Array.isArray(response.data) && response.data.length > 0) {
-        setUser(response.data);
+        // gán dữ liệu vào stories
+        setImages(response.data);
       }
     } catch (error) {
       console.error("Error fetching video data:", error);
     }
   };
-  const fetchData = async () => {
+  const fetchDataUser = async () => {
     try {
-      const response = await axios.get(`${serverURL}/imageStreaming4`);
+      const response = await axios.get(`${serverURL}/data?id=${user.idUser}`);
       if (Array.isArray(response.data) && response.data.length > 0) {
-        setImages(response.data);
+        setUser(response.data);
       }
     } catch (error) {
       console.error("Error fetching video data:", error);
@@ -149,6 +154,32 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }: Props) => {
     fetchData();
     fetchStories();
   }, []);
+  const renderItem1 = ({ item }: { item: any }) => {
+    const maxLength = 7;
+    const displayName =
+      item.username.length > maxLength
+        ? item.username.slice(0, maxLength) + "..."
+        : item.username;
+
+    return (
+      <TouchableOpacity
+        style={styles.padTouch}
+        onPress={() => navigation.navigate("StoryDetails", { userData: user })}
+      >
+        <Image
+          style={{
+            height: 50,
+            width: 50,
+            borderRadius: 50,
+            borderWidth: 3,
+            borderColor: "#0099FF",
+          }}
+          source={{ uri: item.avatar }}
+        />
+        <Text style={{}}>{displayName}</Text>
+      </TouchableOpacity>
+    );
+  };
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -166,7 +197,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }: Props) => {
           <Ionicons name="notifications-outline" size={24} color="black" />
         </Pressable>
       </View>
-      <View style={styles.banner}>
+      {/* <View style={styles.banner}>
         <FlatList
           data={data_avatar}
           renderItem={({ item }) => <Item obj={item} />}
@@ -174,7 +205,29 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }: Props) => {
           horizontal={true}
           showsHorizontalScrollIndicator={false}
         />
-      </View>
+      </View> */}
+      {/* Story Section */}
+      <SafeAreaView style={styles.listStory}>
+        <TouchableOpacity
+          style={{ alignItems: "center" }}
+          onPress={() => navigation.navigate("CreateStory", { userData: user })}
+        >
+          <Image
+            style={{ height: 50, width: 50, borderRadius: 50 }}
+            source={{ uri: user.avatar }}
+          />
+          <Text>You</Text>
+        </TouchableOpacity>
+
+        <FlatList
+          data={stories}
+          renderItem={renderItem1}
+          keyExtractor={(item) => item.idPost}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+        />
+      </SafeAreaView>
+
       <View style={styles.topTrending}>
         <Text style={styles.textTrend}>Top trending</Text>
         <Pressable
@@ -189,7 +242,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }: Props) => {
       <View>
         <FlatList
           data={data_video}
-          renderItem={({ item }) => <Item2 obj={item} />}
+          renderItem={({ item }) => <ItemTopTrending obj={item} />}
           keyExtractor={(item) => item.id}
           horizontal={true}
           showsHorizontalScrollIndicator={false}
@@ -201,7 +254,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }: Props) => {
         <View>
           <FlatList
             data={data_topic}
-            renderItem={({ item }) => <Item3 obj={item} />}
+            renderItem={({ item }) => <ItemBrowseTopic obj={item} />}
             keyExtractor={(item) => item.id}
             numColumns={4}
             columnWrapperStyle={styles.topic_data}
@@ -222,7 +275,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }: Props) => {
       <View>
         <FlatList
           data={data_stream}
-          renderItem={({ item }) => <Item4 obj={item} />}
+          renderItem={({ item }) => <ItemStream obj={item} />}
           keyExtractor={(item) => item.id}
           horizontal={true}
           showsHorizontalScrollIndicator={false}
@@ -242,6 +295,14 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
+  },
+  listStory: {
+    paddingVertical: 15,
+    flexDirection: "row",
+  },
+  padTouch: {
+    paddingHorizontal: 10,
     alignItems: "center",
   },
   pressable: {
