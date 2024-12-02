@@ -7,9 +7,10 @@ import { Ionicons } from "@expo/vector-icons";
 import HomeScreen from "../screens/HomeScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import SearchScreen from "../screens/SearchScreen";
-import CreateVideoScreen from "../screens/CreateVideoScreen"
+import CreateVideoScreen from "../screens/CreateVideoScreen";
 import FriendsScreen from "../screens/FriendsScreen";
 import EditingPage from "../screens/EditingPage";
+import Login from "../screens/LoginScreen";
 
 import { PRIMARY_COLOR } from "../utils/const";
 
@@ -24,7 +25,7 @@ const CreateVideoNavigator = () => {
       <Stack.Screen name="Editing" component={EditingPage} />
     </Stack.Navigator>
   );
-}
+};
 
 function MainNavigator() {
   return (
@@ -40,8 +41,8 @@ function MainNavigator() {
             height: 10,
           },
           tabBarStyle: {
-            display: route.name === "Create Video" ? 'none' : 'flex',
-            backgroundColor: 'white',
+            display: route.name === "Create Video" ? "none" : "flex",
+            backgroundColor: "white",
           },
           tabBarIcon: ({ focused, color, size }) => {
             let iconName: keyof typeof Ionicons.glyphMap = "home-outline";
@@ -60,6 +61,7 @@ function MainNavigator() {
           },
         })}
       >
+        <Tab.Screen name="Login" component={Login} />
         <Tab.Screen name="Home" component={HomeScreen} />
         <Tab.Screen name="Search" component={SearchScreen} />
         <Tab.Screen name="Create Video" component={CreateVideoNavigator} />

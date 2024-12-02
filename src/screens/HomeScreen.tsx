@@ -22,11 +22,8 @@ import {
   data_topic,
   data_stream,
   serverURL,
+  Props,
 } from "../utils/const";
-type Props = {
-  navigation: NavigationProp<any>;
-  route: RouteProp<any>;
-};
 
 const Item = ({ obj }: { obj: any }) => (
   <Pressable

@@ -1,6 +1,13 @@
+import { NavigationProp, RouteProp } from "@react-navigation/native";
+
 export const PRIMARY_COLOR = "#f44b87";
 
-export const serverURL = "http://192.168.1.8:3000";
+export const serverURL = "http://192.168.1.8:8081";
+
+export type Props = {
+  navigation: NavigationProp<any>;
+  route: RouteProp<any>;
+};
 
 export const data_avatar = [
   {
