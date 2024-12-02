@@ -11,6 +11,7 @@ import CreateVideoScreen from "../screens/CreateVideoScreen";
 import FriendsScreen from "../screens/FriendsScreen";
 import EditingPage from "../screens/EditingPage";
 import Login from "../screens/LoginScreen";
+import { Props } from "../utils/const";
 
 import { PRIMARY_COLOR } from "../utils/const";
 
@@ -26,12 +27,20 @@ const CreateVideoNavigator = () => {
     </Stack.Navigator>
   );
 };
+const LoginNavigator = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Login" component={Login} />
+      <Stack.Screen name="Home" component={HomeScreen} />
+    </Stack.Navigator>
+  );
+};
 
-function MainNavigator() {
+export default function MainNavigator() {
   return (
     <NavigationContainer>
       <Tab.Navigator
-        initialRouteName="Home"
+        initialRouteName="Login"
         screenOptions={({ route }) => ({
           headerShown: false,
           tabBarActiveTintColor: PRIMARY_COLOR,
@@ -61,8 +70,8 @@ function MainNavigator() {
           },
         })}
       >
-        <Tab.Screen name="Login" component={Login} />
-        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Login" component={LoginNavigator} />
+        {/* <Tab.Screen name="Home" component={HomeScreen} /> */}
         <Tab.Screen name="Search" component={SearchScreen} />
         <Tab.Screen name="Create Video" component={CreateVideoNavigator} />
         <Tab.Screen name="Friends" component={FriendsScreen} />
@@ -71,5 +80,3 @@ function MainNavigator() {
     </NavigationContainer>
   );
 }
-
-export default MainNavigator;

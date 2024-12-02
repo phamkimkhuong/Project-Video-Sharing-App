@@ -46,7 +46,7 @@ const Login: React.FC<Props> = ({ navigation, route }: Props) => {
       (item) => item.account_user === user && item.pass === pass
     );
     if (checkAccount) {
-      navigation.navigate("VideoSharingApp", { userData: checkAccount });
+      navigation.navigate("Home", { userData: checkAccount });
     } else {
       Alert.alert("Kiểm tra lại tài khoản và mật khẩu!");
     }
@@ -60,7 +60,7 @@ const Login: React.FC<Props> = ({ navigation, route }: Props) => {
     >
       <View style={styles.overlay}>
         <View style={styles.logo}>
-          <Text style={{ color: "pink", fontSize: 32, fontWeight: "bold" }}>
+          <Text style={{ color: "yellow", fontSize: 32, fontWeight: "bold" }}>
             Welcome Back!
           </Text>
         </View>
@@ -70,7 +70,7 @@ const Login: React.FC<Props> = ({ navigation, route }: Props) => {
             <TextInput
               style={styles.textInput}
               placeholder="Username"
-              placeholderTextColor={"pink"}
+              placeholderTextColor={"yellow"}
               value={user}
               onChangeText={setUser}
             />
@@ -81,7 +81,7 @@ const Login: React.FC<Props> = ({ navigation, route }: Props) => {
               style={styles.textInput}
               placeholder="Password"
               secureTextEntry
-              placeholderTextColor={"pink"}
+              placeholderTextColor={"yellow"}
               value={pass}
               onChangeText={setPass}
             />
@@ -136,19 +136,19 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   input: {
-    borderColor: "pink",
+    borderColor: "yellow",
     borderWidth: 0.3,
     borderRadius: 15,
     padding: 10,
     flexDirection: "row",
     marginVertical: 10,
-    color: "pink",
+    color: "yellow",
   },
   textInput: {
     marginLeft: 10,
     flex: 1,
     paddingHorizontal: 10,
-    color: "pink",
+    color: "yellow",
   },
   Touch: {
     padding: 20,
