@@ -29,54 +29,63 @@ const CreateVideoNavigator = () => {
 };
 const LoginNavigator = () => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="Home" component={HomeScreen} />
-    </Stack.Navigator>
+    <NavigationContainer>
+      <Stack.Navigator
+        initialRouteName="Login"
+        screenOptions={{ headerShown: false }}
+      >
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Main" component={MainNavigator} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
-export default function MainNavigator() {
+const MainNavigator: React.FC<Props> = ({ navigation, route }: Props) => {
+  const { userData } = route.params || {};
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        initialRouteName="Login"
-        screenOptions={({ route }) => ({
-          headerShown: false,
-          tabBarActiveTintColor: PRIMARY_COLOR,
-          tabBarInactiveTintColor: "gray",
-          style: {
-            borderRadius: 15,
-            height: 10,
-          },
-          tabBarStyle: {
-            display: route.name === "Create Video" ? "none" : "flex",
-            backgroundColor: "white",
-          },
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName: keyof typeof Ionicons.glyphMap = "home-outline";
-            if (route.name === "Home") {
-              iconName = focused ? "home" : "home-outline";
-            } else if (route.name === "Search") {
-              iconName = focused ? "search" : "search-outline";
-            } else if (route.name === "Create Video") {
-              iconName = focused ? "add-circle" : "add-circle-outline";
-            } else if (route.name === "Friends") {
-              iconName = focused ? "people" : "people-outline";
-            } else if (route.name === "Profile") {
-              iconName = focused ? "person" : "person-outline";
-            }
-            return <Ionicons name={iconName} size={size} color={color} />;
-          },
-        })}
-      >
-        <Tab.Screen name="Login" component={LoginNavigator} />
-        {/* <Tab.Screen name="Home" component={HomeScreen} /> */}
-        <Tab.Screen name="Search" component={SearchScreen} />
-        <Tab.Screen name="Create Video" component={CreateVideoNavigator} />
-        <Tab.Screen name="Friends" component={FriendsScreen} />
-        <Tab.Screen name="Profile" component={ProfileScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <Tab.Navigator
+      // initialRouteName="Home"
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarActiveTintColor: PRIMARY_COLOR,
+        tabBarInactiveTintColor: "gray",
+        style: {
+          borderRadius: 15,
+          height: 10,
+        },
+        tabBarStyle: {
+          display: route.name === "Create Video" ? "none" : "flex",
+          backgroundColor: "white",
+        },
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName: keyof typeof Ionicons.glyphMap = "home-outline";
+          if (route.name === "Home") {
+            iconName = focused ? "home" : "home-outline";
+          } else if (route.name === "Search") {
+            iconName = focused ? "search" : "search-outline";
+          } else if (route.name === "Create Video") {
+            iconName = focused ? "add-circle" : "add-circle-outline";
+          } else if (route.name === "Friends") {
+            iconName = focused ? "people" : "people-outline";
+          } else if (route.name === "Profile") {
+            iconName = focused ? "person" : "person-outline";
+          }
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+      })}
+    >
+      <Tab.Screen
+        name="Home"
+        initialParams={{ userData }}
+        component={HomeScreen}
+      />
+      <Tab.Screen name="Search" component={SearchScreen} />
+      <Tab.Screen name="Create Video" component={CreateVideoNavigator} />
+      <Tab.Screen name="Friends" component={FriendsScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+    </Tab.Navigator>
   );
-}
+};
+
+export default LoginNavigator;

@@ -46,7 +46,7 @@ const Login: React.FC<Props> = ({ navigation, route }: Props) => {
       (item) => item.account_user === user && item.pass === pass
     );
     if (checkAccount) {
-      navigation.navigate("Home", { userData: checkAccount });
+      navigation.navigate("Main", { userData: checkAccount });
     } else {
       Alert.alert("Kiểm tra lại tài khoản và mật khẩu!");
     }
