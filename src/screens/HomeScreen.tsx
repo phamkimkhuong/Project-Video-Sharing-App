@@ -9,6 +9,7 @@ import {
   Alert,
   SafeAreaView,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import React from "react";
 import { NavigationProp, RouteProp } from "@react-navigation/native";
@@ -18,6 +19,7 @@ import Entypo from "@expo/vector-icons/Entypo";
 import axios from "axios";
 import {
   data_avatar,
+  dataAudio,
   data_video,
   data_topic,
   data_stream,
@@ -108,6 +110,13 @@ const ItemStream = ({ obj }: { obj: any }) => (
     </View>
   </Pressable>
 );
+const renderItem2 = ({ item }: { item: any }) => (
+  <TouchableOpacity style={{ paddingHorizontal: 10 }}>
+    <Image source={item.containerImage} />
+    <Image source={item.TitleImage} />
+    <Image source={item.creImage} />
+  </TouchableOpacity>
+);
 
 const HomeScreen: React.FC<Props> = ({ navigation, route }: Props) => {
   const user = route.params?.userData ?? {};
@@ -151,35 +160,9 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }: Props) => {
     fetchData();
     fetchStories();
   }, []);
-  const renderItem1 = ({ item }: { item: any }) => {
-    const maxLength = 7;
-    const displayName =
-      item.username.length > maxLength
-        ? item.username.slice(0, maxLength) + "..."
-        : item.username;
-
-    return (
-      <TouchableOpacity
-        style={styles.padTouch}
-        onPress={() => navigation.navigate("StoryDetails", { userData: user })}
-      >
-        <Image
-          style={{
-            height: 50,
-            width: 50,
-            borderRadius: 50,
-            borderWidth: 3,
-            borderColor: "#0099FF",
-          }}
-          source={{ uri: item.avatar }}
-        />
-        <Text style={{}}>{displayName}</Text>
-      </TouchableOpacity>
-    );
-  };
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+      <SafeAreaView style={styles.header}>
         <View style={styles.header}>
           <Image source={require("../assets/home/logo.png")} />
           <Text style={styles.title}>Video Sharing App</Text>
@@ -193,7 +176,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }: Props) => {
         >
           <Ionicons name="notifications-outline" size={24} color="black" />
         </Pressable>
-      </View>
+      </SafeAreaView>
       {/* <View style={styles.banner}>
         <FlatList
           data={data_avatar}
@@ -203,11 +186,13 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }: Props) => {
           showsHorizontalScrollIndicator={false}
         />
       </View> */}
-      {/* Story Section */}
+      {/* Create Story */}
       <SafeAreaView style={styles.listStory}>
         <TouchableOpacity
           style={{ alignItems: "center" }}
-          onPress={() => navigation.navigate("CreateStory", { userData: user })}
+          onPress={() =>
+            navigation.navigate("Create Video", { userData: user })
+          }
         >
           <Image
             style={{ height: 50, width: 50, borderRadius: 50 }}
@@ -215,17 +200,9 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }: Props) => {
           />
           <Text>You</Text>
         </TouchableOpacity>
-
-        <FlatList
-          data={stories}
-          renderItem={renderItem1}
-          keyExtractor={(item) => item.idPost}
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-        />
       </SafeAreaView>
-
-      <View style={styles.topTrending}>
+      {/* Top trending */}
+      <SafeAreaView style={styles.topTrending}>
         <Text style={styles.textTrend}>Top trending</Text>
         <Pressable
           style={({ pressed }: { pressed: boolean }) => [
@@ -235,8 +212,8 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }: Props) => {
         >
           <Text style={{ color: "red", marginRight: 40 }}>View more</Text>
         </Pressable>
-      </View>
-      <View>
+      </SafeAreaView>
+      <SafeAreaView>
         <FlatList
           data={data_video}
           renderItem={({ item }) => <ItemTopTrending obj={item} />}
@@ -245,8 +222,9 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }: Props) => {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.center}
         />
-      </View>
-      <View style={{}}>
+      </SafeAreaView>
+      {/* Browse topic */}
+      <SafeAreaView style={{ marginTop: 10 }}>
         <Text style={styles.textTrend}>Browse topic</Text>
         <View>
           <FlatList
@@ -257,8 +235,8 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }: Props) => {
             columnWrapperStyle={styles.topic_data}
           />
         </View>
-      </View>
-      <View style={styles.topTrending}>
+      </SafeAreaView>
+      <SafeAreaView style={styles.topTrending}>
         <Text style={styles.textTrend}>Streaming</Text>
         <Pressable
           style={({ pressed }: { pressed: boolean }) => [
@@ -268,8 +246,8 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }: Props) => {
         >
           <Text style={{ color: "red", marginRight: 40 }}>View more</Text>
         </Pressable>
-      </View>
-      <View>
+      </SafeAreaView>
+      <SafeAreaView>
         <FlatList
           data={data_stream}
           renderItem={({ item }) => <ItemStream obj={item} />}
@@ -278,8 +256,28 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }: Props) => {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.streaming2}
         />
-      </View>
-    </View>
+      </SafeAreaView>
+      {/* Audio Section */}
+      <SafeAreaView style={{ marginTop: 20, marginBottom: 20 }}>
+        <SafeAreaView
+          style={{ flexDirection: "row", justifyContent: "space-between" }}
+        >
+          <Text style={{ fontSize: 18, fontWeight: "bold" }}>Audio</Text>
+          <TouchableOpacity>
+            <Image source={require("../assets/audio/img/Button1.png")} />
+          </TouchableOpacity>
+        </SafeAreaView>
+
+        <FlatList
+          data={dataAudio}
+          renderItem={renderItem2}
+          keyExtractor={(item) => item.id}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ marginTop: 10 }}
+        />
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 const styles = StyleSheet.create({
@@ -363,7 +361,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8F9FA",
     marginRight: 10,
     padding: 10,
-    width: 75,
+    width: 80,
     height: 70,
     alignItems: "center",
   },

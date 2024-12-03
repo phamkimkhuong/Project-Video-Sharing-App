@@ -10,13 +10,13 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { serverURL, Props } from "../utils/const";
+import { serverURL, Props, dataVideos } from "../utils/const";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import axios from "axios";
 
 const widthScreen = Dimensions.get("window").width;
 
-const MyVideos = (id: number) => {
+const MyVideos = ({ id }: { id: number }) => {
   const [videos, setVideos] = useState<any[]>([]);
   const navigation = useNavigation();
 
@@ -68,7 +68,7 @@ const MyVideos = (id: number) => {
     />
   );
 };
-const MyImages = (id: number) => {
+const MyImages = ({ id }: { id: number }) => {
   const [images, setImages] = useState<{ url: string }[]>([]);
   const navigation = useNavigation();
   const fetchData = async (id: number) => {
@@ -131,17 +131,55 @@ const MyLiked = () => {
     />
   );
 };
-const dataVideos = [
-  { id: "1", image: require("../assets/myProfile/Container72.png") },
-  { id: "2", image: require("../assets/myProfile/Container73.png") },
-  { id: "3", image: require("../assets/myProfile/Container74.png") },
-  { id: "4", image: require("../assets/myProfile/Container75.png") },
-  { id: "5", image: require("../assets/myProfile/Container76.png") },
-  { id: "6", image: require("../assets/myProfile/Container77.png") },
-  { id: "7", image: require("../assets/myProfile/Container78.png") },
-  { id: "8", image: require("../assets/myProfile/Container79.png") },
-  { id: "9", image: require("../assets/myProfile/Container80.png") },
-];
+
+const MyVideosTabView = ({ id }: { id: number }) => {
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
+    { key: "videos", title: "My Videos" },
+    { key: "images", title: "My Images" },
+    { key: "liked", title: "Liked" },
+  ]);
+
+  const renderScene = SceneMap({
+    videos: () => <MyVideos id={id} />,
+    images: () => <MyImages id={id} />,
+    liked: MyLiked,
+  });
+
+  const renderTabBar = (props: any) => (
+    <TabBar
+      {...props}
+      indicatorStyle={styles.indicator}
+      style={styles.tabBar}
+      renderLabel={({
+        route,
+        focused,
+      }: {
+        route: { key: string; title: string };
+        focused: boolean;
+      }) => (
+        <Text
+          style={[
+            styles.tabLabel,
+            focused ? styles.activeTabLabel : styles.inactiveTabLabel,
+          ]}
+        >
+          {route.title}
+        </Text>
+      )}
+    />
+  );
+
+  return (
+    <TabView
+      navigationState={{ index, routes }}
+      renderScene={renderScene}
+      renderTabBar={renderTabBar}
+      onIndexChange={setIndex}
+      initialLayout={{ width: widthScreen }}
+    />
+  );
+};
 
 const ProfileScreen: React.FC<Props> = ({ navigation, route }: Props) => {
   const user = route.params ? route.params.userData : null;
@@ -210,6 +248,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation, route }: Props) => {
           </TouchableOpacity>
         </View>
       </View>
+      <MyVideosTabView id={user.idUser} />
     </View>
   );
 };
@@ -235,6 +274,26 @@ const styles = StyleSheet.create({
     padding: 15,
     height: 180,
     resizeMode: "contain",
+  },
+  indicator: {
+    backgroundColor: "pink",
+    height: 2,
+  },
+  tabBar: {
+    backgroundColor: "#D5E2E8",
+    elevation: 0,
+    shadowOpacity: 0,
+    borderBottomWidth: 2,
+    borderBottomColor: "#e0e0e0",
+  },
+  tabLabel: {
+    fontSize: 16,
+  },
+  activeTabLabel: {
+    color: "pink",
+  },
+  inactiveTabLabel: {
+    color: "black",
   },
 });
 export default ProfileScreen;

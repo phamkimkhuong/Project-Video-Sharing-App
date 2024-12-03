@@ -8,7 +8,43 @@ export type Props = {
   navigation: NavigationProp<any>;
   route: RouteProp<any>;
 };
-
+export const dataAudio = [
+  {
+    id: "1",
+    containerImage: require("../assets/audio/img/Image7.png"),
+    TitleImage: require("../assets/audio/img/Perfectlady.png"),
+    creImage: require("../assets/audio/img/Bookcase.png"),
+  },
+  {
+    id: "2",
+    containerImage: require("../assets/audio/img/Image8.png"),
+    TitleImage: require("../assets/audio/img/Experience.png"),
+    creImage: require("../assets/audio/img/Lifestyle.png"),
+  },
+  {
+    id: "3",
+    containerImage: require("../assets/audio/img/Image9.png"),
+    TitleImage: require("../assets/audio/img/Yourself.png"),
+    creImage: require("../assets/audio/img/Bookcase.png"),
+  },
+  {
+    id: "4",
+    containerImage: require("../assets/audio/img/Image10.png"),
+    TitleImage: require("../assets/audio/img/Experience.png"),
+    creImage: require("../assets/audio/img/Lifestyle.png"),
+  },
+];
+export const dataVideos = [
+  { id: "1", image: require("../assets/myProfile/Container72.png") },
+  { id: "2", image: require("../assets/myProfile/Container73.png") },
+  { id: "3", image: require("../assets/myProfile/Container74.png") },
+  { id: "4", image: require("../assets/myProfile/Container75.png") },
+  { id: "5", image: require("../assets/myProfile/Container76.png") },
+  { id: "6", image: require("../assets/myProfile/Container77.png") },
+  { id: "7", image: require("../assets/myProfile/Container78.png") },
+  { id: "8", image: require("../assets/myProfile/Container79.png") },
+  { id: "9", image: require("../assets/myProfile/Container80.png") },
+];
 export const data_avatar = [
   {
     id: "1",
@@ -123,7 +159,7 @@ export const data_stream = [
   {
     id: "2",
     name: "Lifestyle",
-    img: require("../assets/home/stream2.png"),
+    img: require("../assets/home/stream.png"),
     avatar: require("../assets/home/stream_avatar.png"),
     play: require("../assets/home/play.png"),
     view: "1.5Mviews",
@@ -132,7 +168,7 @@ export const data_stream = [
   {
     id: "3",
     name: "Lifestyle",
-    img: require("../assets/home/stream3.png"),
+    img: require("../assets/home/stream.png"),
     avatar: require("../assets/home/stream_avatar.png"),
     play: require("../assets/home/play.png"),
     view: "1.5Mviews",

@@ -83,7 +83,11 @@ const MainNavigator: React.FC<Props> = ({ navigation, route }: Props) => {
       <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="Create Video" component={CreateVideoNavigator} />
       <Tab.Screen name="Friends" component={FriendsScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen
+        name="Profile"
+        initialParams={{ userData }}
+        component={ProfileScreen}
+      />
     </Tab.Navigator>
   );
 };
