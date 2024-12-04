@@ -67,7 +67,7 @@ const Login: React.FC<Props> = ({ navigation, route }: Props) => {
         </View>
         <View style={styles.viewInput}>
           <View style={styles.input}>
-            <Icon name="user" size={30} color={"pink"} />
+            <Icon name="user" size={30} color={"yellow"} />
             <TextInput
               style={styles.textInput}
               placeholder="Username"
@@ -77,7 +77,7 @@ const Login: React.FC<Props> = ({ navigation, route }: Props) => {
             />
           </View>
           <View style={styles.input}>
-            <Icon name="lock" size={30} color={"pink"} />
+            <Icon name="lock" size={30} color={"yellow"} />
             <TextInput
               style={styles.textInput}
               placeholder="Password"
@@ -102,12 +102,12 @@ const Login: React.FC<Props> = ({ navigation, route }: Props) => {
             style={{ alignSelf: "flex-end", flexDirection: "row" }}
             onPress={() => navigation.navigate("Register")}
           >
-            <Text style={{ fontSize: 13, color: "white" }}>Register</Text>
+            <Text style={{ fontSize: 20, color: "white" }}>Register</Text>
             <AntDesign
               name="arrowright"
-              size={16}
+              size={22}
               color="white"
-              style={{ alignSelf: "center", paddingHorizontal: 10 }}
+              style={{ alignSelf: "center", paddingHorizontal: 12 }}
             />
           </TouchableOpacity>
         </View>

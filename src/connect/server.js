@@ -1,6 +1,7 @@
 const express = require("express");
 const mysql = require("mysql");
 const cors = require("cors");
+const bcrypt = require("bcrypt");
 
 const app = express();
 app.use(cors());
@@ -182,6 +183,81 @@ app.get("/profileimages", (req, res) => {
       res.json(results);
     }
   );
+});
+// Endpoint để tao account end user
+app.post("/register", (req, res) => {
+  const { username, sdt, email, accname, pass } = req.body;
+  if (!username || !sdt || !email || !accname || !pass) {
+    return res
+      .status(400)
+      .json({ error: "Vui lòng cung cấp đầy đủ thông tin" });
+  }
+
+  const queryUser = `
+    INSERT INTO Users (username, sdt, email, avatar, birthDay)
+    VALUES (?, ?, ?, 'https://imgur.com/RrBwvfA.png', NOW())
+  `;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error("Lỗi kết nối cơ sở dữ liệu:", err);
+      return res.status(500).json({ error: "Lỗi kết nối cơ sở dữ liệu." });
+    }
+
+    connection.beginTransaction(async (err) => {
+      if (err) {
+        connection.release();
+        console.error("Lỗi bắt đầu giao dịch:", err);
+        return res.status(500).json({ error: "Lỗi bắt đầu giao dịch." });
+      }
+      try {
+        // Mã hóa mật khẩu với 10 vòng lặp
+        const hashedPassword = await bcrypt.hash(pass, 10);
+        connection.query(
+          queryUser,
+          [username, sdt, email],
+          (err, resultUser) => {
+            if (err) {
+              connection.rollback(() => {
+                connection.release();
+                console.error("Lỗi insert user:", err);
+                return res.status(500).json({ error: "Lỗi insert user." });
+              });
+            } else {
+              const idUser = resultUser.insertId;
+              console.error("idUser", idUser);
+              console.error("resultUser", resultUser);
+              const queryAccount = `
+                INSERT INTO Account (idUser, username, pass)
+                VALUES (?, ?, ?)
+              `;
+              connection.query(queryAccount, [idUser, accname, hashedPassword]);
+              connection.commit((err) => {
+                if (err) {
+                  connection.rollback(() => {
+                    connection.release();
+                    return res
+                      .status(500)
+                      .json({ error: "Lỗi commit giao dịch." });
+                  });
+                } else {
+                  connection.release();
+                  res
+                    .status(201)
+                    .json({ message: "Tạo tài khoản thành công!" });
+                }
+              });
+            }
+          }
+        );
+      } catch (error) {
+        connection.rollback(() => {
+          connection.release();
+          console.error("Lỗi cơ sở dữ liệu:", error);
+          res.status(500).json({ error: "Lỗi khi tạo tài khoản." });
+        });
+      }
+    });
+  });
 });
 
 // Khởi chạy server

@@ -14,6 +14,7 @@ import Login from "../screens/LoginScreen";
 import { Props } from "../utils/const";
 
 import { PRIMARY_COLOR } from "../utils/const";
+import RegisterScreen from "../screens/RegisterScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -35,6 +36,7 @@ const LoginNavigator = () => {
         screenOptions={{ headerShown: false }}
       >
         <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Main" component={MainNavigator} />
       </Stack.Navigator>
     </NavigationContainer>
