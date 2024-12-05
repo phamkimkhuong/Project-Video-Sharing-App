@@ -17,6 +17,7 @@ import { PRIMARY_COLOR } from "../utils/const";
 import RegisterScreen from "../screens/RegisterScreen";
 import Following from "../screens/Following";
 import ImageViewScreen from "../components/profile/ImageView";
+import ImageView from "../screens/imageStreaming";
 
 const Tab = createBottomTabNavigator();
 
@@ -50,6 +51,7 @@ const ProfileNavigator: React.FC<Props> = ({ navigation, route }: Props) => {
       />
       <Stack.Screen name="Following" component={Following} />
       <Stack.Screen name="ImageView" component={ImageViewScreen} />
+      <Stack.Screen name="Image" component={ImageView} />
     </Stack.Navigator>
   );
 };

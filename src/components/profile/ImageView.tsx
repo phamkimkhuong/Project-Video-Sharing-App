@@ -1,9 +1,8 @@
 import React from "react";
 import { View, Image, StyleSheet } from "react-native";
-
-const ImageViewScreen = ({ route }) => {
+import { Props } from "../../utils/const";
+const ImageViewScreen: React.FC<Props> = ({ navigation, route }: Props) => {
   const { imageUrl } = route.params;
-
   return (
     <View style={styles.container}>
       <Image source={{ uri: imageUrl }} style={styles.image} />

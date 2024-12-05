@@ -41,13 +41,13 @@ const MyVideos = ({ id }: { id: number }) => {
       renderItem={({ item }) => (
         <TouchableOpacity
           style={styles.videoItem}
-          //   onPress={() =>
-          //     navigation.navigate("VideoDetails", {
-          //       idPost: item.idPost,
-          //       idUser: item.idUser,
-          //       avatar: item.avatar,
-          //     })
-          //   }
+          // onPress={() =>
+          //   navigation.navigate("VideoDetails", {
+          //     idPost: item.idPost,
+          //     idUser: item.idUser,
+          //     avatar: item.avatar,
+          //   })
+          // }
         >
           <Image
             style={{ height: "100%", width: "100%", borderRadius: 10 }}
@@ -106,7 +106,7 @@ const MyImages = ({ id }: { id: number }) => {
         <TouchableOpacity
           style={styles.videoItem}
           onPress={() =>
-            navigation.navigate("ImageView", { imageUrl: item.url })
+            navigation.navigate("Image", { imageUrl: item.url, id: id })
           }
         >
           <Image

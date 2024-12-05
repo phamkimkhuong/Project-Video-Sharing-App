@@ -329,6 +329,71 @@ app.post("/savePost", (req, res) => {
     }
   );
 });
+app.get("/imageStreaming", (req, res) => {
+  pool.query(
+    `SELECT * FROM Post p 
+     INNER JOIN Users u ON p.idUser = u.idUser
+     WHERE p.type = 'image'
+     ORDER BY p.idPost DESC`,
+    (err, results) => {
+      if (err) {
+        console.log("Error fetching image details:", err);
+        return res.status(500).send("Server Error");
+      }
+      res.json(results);
+    }
+  );
+});
+// API Endpoint để lấy danh sách comment cua 1 video
+app.get("/comment", (req, res) => {
+  const { id } = req.query;
+  const parsedId = parseInt(id, 10);
+  if (isNaN(parsedId)) {
+    return res.status(400).send("Invalid id parameter");
+  }
+  pool.query(
+    `SELECT c.text, c.time, u.avatar, u.username 
+     FROM Comment c 
+     INNER JOIN Post p ON c.idPost = p.idPost 
+     INNER JOIN Users u ON u.idUser = c.idUser 
+     WHERE p.idPost = ? 
+     ORDER BY p.idPost DESC`,
+    [parsedId],
+    (err, results) => {
+      if (err) {
+        console.log("Error fetching comments:", err);
+        return res.status(500).send("Server Error");
+      }
+      res.json(results);
+    }
+  );
+});
+// Endpoint để lưu bài viết mới
+app.post("/insertComment", (req, res) => {
+  console.log("req.body", req.body);
+  const { idPost, idUser, content } = req.body;
+
+  if (!idUser || !idPost) {
+    return res
+      .status(400)
+      .json({ error: "Vui lòng cung cấp idUser, idPost và text." });
+  }
+
+  const query = `
+    INSERT INTO Comment (idUser, idPost, text, time)
+    VALUES (?, ?, ?, NOW())
+  `;
+
+  pool.query(query, [idUser, idPost, content], (err, results) => {
+    if (err) {
+      console.error("Lỗi cơ sở dữ liệu:", err);
+      return res
+        .status(500)
+        .json({ error: "Lỗi khi thêm bình luận vào cơ sở dữ liệu." });
+    }
+    res.status(201).json({ message: "Bình luận thành công!" });
+  });
+});
 // Khởi chạy server
 app.listen(8081, () => {
   console.log("Server running on http://localhost:8081");
