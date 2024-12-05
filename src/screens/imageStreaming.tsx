@@ -21,7 +21,15 @@ const ImageView: React.FC<Props> = ({ navigation, route }: Props) => {
   };
   const [images, setImages] = useState<any[]>([]);
   const [likedPosts, setLikedPosts] = useState<{ [key: number]: boolean }>({});
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState<
+    {
+      idComment: string;
+      avatar: string;
+      username: string;
+      time: string;
+      text: string;
+    }[]
+  >([]);
   const [content, setContent] = useState("");
   const [isCommentsVisible, setCommentsVisible] = useState(false);
   const fetchData = async () => {
@@ -72,7 +80,7 @@ const ImageView: React.FC<Props> = ({ navigation, route }: Props) => {
         fetchComments(idPost);
         setContent("");
       } else {
-        Alert.alert("Lỗi", "Đã xảy ra lỗi khi lưu bài viết vào cơ sở dữ liệu.");
+        Alert.alert("Lỗi", "Đã xảy ra lỗi khi lưu comment vào cơ sở dữ liệu.");
       }
     } catch (error) {
       console.error("Lỗi khi gọi API:", error);
@@ -95,7 +103,7 @@ const ImageView: React.FC<Props> = ({ navigation, route }: Props) => {
       <TouchableOpacity
         style={{ padding: 10, flexDirection: "row" }}
         onPress={() =>
-          navigation.navigate("ProfileDetails", { user: item, my: my })
+          navigation.navigate("ProfileDetails", { user: item, id: id })
         }
       >
         <Image
@@ -156,7 +164,17 @@ const ImageView: React.FC<Props> = ({ navigation, route }: Props) => {
             <FlatList
               data={comments}
               keyExtractor={(comment) => comment.idComment}
-              renderItem={({ item }) => (
+              renderItem={({
+                item,
+              }: {
+                item: {
+                  idComment: string;
+                  avatar: string;
+                  username: string;
+                  time: string;
+                  text: string;
+                };
+              }) => (
                 <View
                   style={{
                     flexDirection: "row",

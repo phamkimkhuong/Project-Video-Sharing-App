@@ -10,38 +10,52 @@ import Icon from "react-native-vector-icons/EvilIcons";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import React from "react";
+import { serverURL, Props } from "../utils/const";
+import e from "express";
 
 const widthScreen = Dimensions.get("window").width;
-export default function App({ navigation }) {
-  const [result, setResult] = useState([]);
-  const [keyword, setKeyword] = useState();
+const App: React.FC<Props> = ({ navigation, route }: Props) => {
+  const user = route.params?.userData ?? {};
+  interface SearchResult {
+    idPost: any;
+    avatar: string;
+    username: string;
+    content: string;
+  }
+
+  const [result, setResult] = useState<SearchResult[]>([]);
+  const [keyword, setKeyword] = useState<string>("");
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`http://192.168.1.140:3000/search`);
+      const response = await axios.get(`${serverURL}/search`);
       setResult(response.data);
     } catch (error) {
       console.log("Lỗi khi search", error);
-      Alert.alert("Lỗi khi search ", error.message);
+      if (error instanceof Error) {
+        Alert.alert("Lỗi khi search ", error.message);
+      } else {
+        Alert.alert("Lỗi khi search ", "Unknown error occurred");
+      }
     }
   };
 
-  const fetchDataSearch = async (keyword) => {
+  const fetchDataSearch = async (keyword: string) => {
     try {
-      const response = await axios.get(
-        "http://192.168.1.140:3000/searchKeyWord",
-        {
-          params: { keyword },
-        }
-      );
+      const response = await axios.get(`${serverURL}/searchKeyWord`, {
+        params: { keyword },
+      });
       setResult(response.data);
     } catch (error) {
       console.log("Lỗi khi tìm kiếm", error);
-      Alert.alert("Lỗi khi tìm kiếm", error.message);
+      if (error instanceof Error) {
+        Alert.alert("Lỗi khi tìm kiếm ", error.message);
+      } else {
+        Alert.alert("Lỗi khi tìm kiếm ", "Unknown error occurred");
+      }
     }
   };
-
-  const handleSearch = (text) => {
+  const handleSearch = (text: string) => {
     setKeyword(text);
     fetchDataSearch(text);
   };
@@ -51,12 +65,12 @@ export default function App({ navigation }) {
   }, []);
 
   return (
-    <View style={styles.container} showsVerticalScrollIndicator={false}>
+    <View style={styles.container}>
       <View style={styles.head}>
         <View style={styles.input}>
           <TextInput
             style={{ flex: 1 }}
-            textContentType="search"
+            // textContentType="search"
             placeholder="search ..."
             value={keyword}
             onChangeText={handleSearch}
@@ -220,7 +234,7 @@ export default function App({ navigation }) {
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -258,3 +272,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+export default App;

@@ -12,7 +12,8 @@ const MyVideos = ({ idUser, my }: { idUser: number; my: any }) => {
   const [followed, setFollowed] = useState<any[]>([]);
 
   const click = ({ user }: { user: any }) => {
-    // navigation.navigate("ProfileDetails", { user: user, my: my });
+    navigation.navigate("ProfileDetails", { user: user, my: my });
+    // Alert.alert("Thông báo", "Chức năng đang phát triển");
   };
   const fetchData = async (idUser: number) => {
     try {
@@ -74,7 +75,8 @@ const MyImages = ({ idUser, my }: { idUser: number; my: any }) => {
   const navigation = useNavigation();
   const [followed, setFollowed] = useState<any[]>([]);
   const click = ({ user }: { user: any }) => {
-    // navigation.navigate("ProfileDetails", { user: user, my: my });
+    navigation.navigate("ProfileDetails", { user: user, my: my });
+    Alert.alert("Thông báo", "Chức năng đang");
   };
   const fetchData = async (idUser: number) => {
     try {

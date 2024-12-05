@@ -2,7 +2,7 @@ const express = require("express");
 const mysql = require("mysql");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
-
+const uploadRoute = require("../connect/routeUpload");
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -394,6 +394,180 @@ app.post("/insertComment", (req, res) => {
     res.status(201).json({ message: "Bình luận thành công!" });
   });
 });
+app.get("/search", (req, res) => {
+  pool.query(
+    `SELECT * FROM Post p 
+     INNER JOIN Users u ON p.idUser = u.idUser
+     WHERE p.type = 'image'`,
+    (err, results) => {
+      if (err) {
+        console.log("Error fetching search:", err);
+        return res.status(500).send("Server Error");
+      }
+      console.log(results);
+      res.json(results);
+    }
+  );
+});
+app.get("/searchKeyWord", (req, res) => {
+  const { keyword } = req.query;
+  pool.query(
+    `SELECT * FROM Post p
+     INNER JOIN Users u ON p.idUser = u.idUser
+     WHERE (p.content LIKE ? OR u.username LIKE ?)
+     AND p.type = 'video'`,
+    [`%${keyword}%`, `%${keyword}%`],
+    (err, results) => {
+      if (err) {
+        console.error("Error fetching searchKeyword:", err);
+        return res.status(500).send("Server Error");
+      }
+      res.json(results);
+    }
+  );
+});
+app.get("/is-following", (req, res) => {
+  const { id_following, id_followed } = req.query;
+
+  // Kiểm tra đầu vào
+  if (!id_following || !id_followed) {
+    return res
+      .status(400)
+      .json({ error: "Thiếu id_following hoặc id_followed" });
+  }
+
+  pool.query(
+    `SELECT COUNT(*) AS is_following
+     FROM Follow
+     WHERE id_following = ? AND id_followed = ?`,
+    [parseInt(id_following), parseInt(id_followed)],
+    (err, results) => {
+      if (err) {
+        console.error("Lỗi kiểm tra follow:", err);
+        return res
+          .status(500)
+          .json({ error: "Lỗi khi kiểm tra trạng thái follow." });
+      }
+
+      // Lấy giá trị is_following (0 hoặc 1)
+      const isFollowing = results[0].is_following > 0;
+
+      res.status(200).json({ isFollowing });
+    }
+  );
+});
+// Endpoint để theo dõi người dùng
+app.post("/follow", (req, res) => {
+  const { idFollowing, idFollowed } = req.body;
+  pool.query(
+    `INSERT INTO Follow (id_following, id_followed)
+     VALUES (?, ?)`,
+    [parseInt(idFollowing), parseInt(idFollowed)],
+    (err, results) => {
+      if (err) {
+        console.error("Lỗi khi theo dõi:", err);
+        return res.status(500).json({ error: "Lỗi khi theo dõi người dùng." });
+      }
+      res.status(200).json({ message: "Đã theo dõi người dùng thành công" });
+    }
+  );
+});
+// Endpoint để hủy theo dõi người dùng
+app.delete("/unfollow", (req, res) => {
+  // console.error("req.body", req.body);
+  const { idFollowing, idFollowed } = req.body;
+  pool.query(
+    `DELETE FROM Follow
+     WHERE id_following = ? AND id_followed = ?`,
+    [parseInt(idFollowing), parseInt(idFollowed)],
+    (err, results) => {
+      if (err) {
+        console.error("Lỗi khi hủy theo dõi:", err);
+        return res
+          .status(500)
+          .json({ error: "Lỗi khi hủy theo dõi người dùng." });
+      }
+      res
+        .status(200)
+        .json({ message: "Đã hủy theo dõi người dùng thành công" });
+    }
+  );
+});
+app.get("/is-like", (req, res) => {
+  const { idPost, idUser } = req.query;
+
+  // Kiểm tra đầu vào
+  if (!idPost || !idUser) {
+    return res.status(400).json({ error: "Thiếu idPost hoặc idUser" });
+  }
+
+  pool.query(
+    `SELECT COUNT(*) AS is_like
+     FROM Likes
+     WHERE idPost = ? AND idUser = ?`,
+    [parseInt(idPost), parseInt(idUser)],
+    (err, results) => {
+      if (err) {
+        console.error("Lỗi kiểm tra Like:", err);
+        return res
+          .status(500)
+          .json({ error: "Lỗi khi kiểm tra trạng thái Like." });
+      }
+
+      // Lấy giá trị is_Like (0 hoặc 1)
+      const is_Like = results[0].is_like > 0;
+
+      res.status(200).json({ is_Like });
+    }
+  );
+});
+app.post("/like", (req, res) => {
+  const { idUser, idPost } = req.body;
+  pool.query(
+    `INSERT INTO Likes (idUser, idPost) VALUES (?, ?)`,
+    [parseInt(idUser), parseInt(idPost)],
+    (err, results) => {
+      if (err) {
+        console.error("Error liking post:", err);
+        return res.status(500).send("Server error");
+      }
+      res.status(200).send({ message: "Liked successfully" });
+    }
+  );
+});
+app.post("/unlike", (req, res) => {
+  const { idUser, idPost } = req.body;
+  pool.query(
+    `DELETE FROM Likes WHERE idUser = ? AND idPost = ?`,
+    [parseInt(idUser), parseInt(idPost)],
+    (err, results) => {
+      if (err) {
+        console.error("Error unliking post:", err);
+        return res.status(500).send("Server error");
+      }
+      res.status(200).send({ message: "Unliked successfully" });
+    }
+  );
+});
+const cloudinary = require("../utils/cloundiary");
+const upload = require("../utils/multer");
+app.post("/upload", upload.single("image"), async (req, res) => {
+  try {
+    const result = await cloudinary.uploader.upload(req.file.path);
+    res.json(result);
+    res.status(200).json({
+      data: result,
+      sussess: true,
+      message: "Upload ảnh thành công.",
+    });
+  } catch (error) {
+    console.error("Lỗi khi upload ảnh:", error);
+    res.status(500).json({ error: "Lỗi khi upload ảnh." });
+  }
+});
+
+// gọi hàm post uploadRoute
+
 // Khởi chạy server
 app.listen(8081, () => {
   console.log("Server running on http://localhost:8081");

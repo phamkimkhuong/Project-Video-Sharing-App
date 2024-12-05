@@ -18,6 +18,7 @@ import RegisterScreen from "../screens/RegisterScreen";
 import Following from "../screens/Following";
 import ImageViewScreen from "../components/profile/ImageView";
 import ImageView from "../screens/imageStreaming";
+import ProfileDetails from "../screens/profiledetails";
 
 const Tab = createBottomTabNavigator();
 
@@ -52,6 +53,7 @@ const ProfileNavigator: React.FC<Props> = ({ navigation, route }: Props) => {
       <Stack.Screen name="Following" component={Following} />
       <Stack.Screen name="ImageView" component={ImageViewScreen} />
       <Stack.Screen name="Image" component={ImageView} />
+      <Stack.Screen name="ProfileDetails" component={ProfileDetails} />
     </Stack.Navigator>
   );
 };
