@@ -43,6 +43,8 @@ const Login: React.FC<Props> = ({ navigation, route }: Props) => {
 
   const handleLogin = () => {
     const checkAccount = data.find(
+      // (item) =>
+      // item.account_user === user && bcrypt.compareSync(pass, item.pass)
       (item) => item.account_user === user && item.pass === pass
     );
     if (checkAccount) {

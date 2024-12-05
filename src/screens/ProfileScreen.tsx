@@ -18,7 +18,6 @@ const widthScreen = Dimensions.get("window").width;
 
 const MyVideos = ({ id }: { id: number }) => {
   const [videos, setVideos] = useState<any[]>([]);
-  const navigation = useNavigation();
 
   const fetchData = async (id: number) => {
     try {
@@ -68,9 +67,20 @@ const MyVideos = ({ id }: { id: number }) => {
     />
   );
 };
+import { StackNavigationProp } from "@react-navigation/stack";
+
+type RootStackParamList = {
+  Profile: { userData: any };
+  Following: { user: any };
+  ImageView: { imageUrl: string };
+};
+type ProfileScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "Profile"
+>;
 const MyImages = ({ id }: { id: number }) => {
+  const navigation = useNavigation<ProfileScreenNavigationProp>();
   const [images, setImages] = useState<{ url: string }[]>([]);
-  const navigation = useNavigation();
   const fetchData = async (id: number) => {
     try {
       const response = await axios.get(`${serverURL}/profileimages?id=${id}`);
@@ -95,9 +105,9 @@ const MyImages = ({ id }: { id: number }) => {
       renderItem={({ item }) => (
         <TouchableOpacity
           style={styles.videoItem}
-          // onPress={() =>
-          //   navigation.navigate("ImageView", { imageUrl: item.url })
-          // }
+          onPress={() =>
+            navigation.navigate("ImageView", { imageUrl: item.url })
+          }
         >
           <Image
             style={{ height: "100%", width: "100%", borderRadius: 10 }}

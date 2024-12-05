@@ -8,6 +8,51 @@ export type Props = {
   navigation: NavigationProp<any>;
   route: RouteProp<any>;
 };
+export const dataFollowing = [
+  {
+    id: "1",
+    name: "Kiran Glaucus",
+    image: require("../assets/Follow/Avatar31.png"),
+  },
+  {
+    id: "2",
+    name: "Sally Rooney",
+    image: require("../assets/Follow/Avatar32.png"),
+  },
+  {
+    id: "3",
+    name: "Marie Franco",
+    image: require("../assets/Follow/Avatar36.png"),
+  },
+  {
+    id: "4",
+    name: "Jena Nguyen",
+    image: require("../assets/Follow/Avatar35.png"),
+  },
+  // {
+  //   id: "5",
+  //   name: "Kristin Watson",
+  //   image: require("../assets/Follow/Avatar34.png"),
+  // },
+];
+export const dataGoiY = [
+  {
+    id: "1",
+    name: "Boby Sandoval",
+    image: require("../assets/Follow/Avatar32.png"),
+  },
+  {
+    id: "2",
+    name: "Jenie Bonce",
+    image: require("../assets/Follow/Avatar38.png"),
+  },
+  {
+    id: "3",
+    name: "Anja O` Connor",
+    image: require("../assets/Follow/Avatar39.png"),
+  },
+];
+
 export const dataAudio = [
   {
     id: "1",

@@ -120,6 +120,52 @@ app.get("/follow", (req, res) => {
     }
   );
 });
+// API Endpoint để lấy danh sách người đang theo dõi người dùng (followed)
+app.get("/followed", (req, res) => {
+  let id = parseInt(req.query.id, 10); // Lấy id người dùng
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json({ error: "Invalid ID parameter. Must be a number." });
+  }
+  pool.query(
+    `SELECT f.id_following, u.*
+     FROM Follow f
+     INNER JOIN Users u ON u.idUser = f.id_following
+     WHERE f.id_followed = ?`,
+    [id],
+    (err, results) => {
+      if (err) {
+        console.log("Error fetching followed:", err);
+        return res.status(500).send("Server Error");
+      }
+      res.json(results);
+    }
+  );
+});
+// API Endpoint để lấy danh sách người mà người dùng đang theo dõi (following)
+app.get("/following", (req, res) => {
+  let id = parseInt(req.query.id, 10); // Lấy id người dùng
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json({ error: "Invalid ID parameter. Must be a number." });
+  }
+  pool.query(
+    `SELECT f.id_followed, u.*
+     FROM Follow f
+     INNER JOIN Users u ON u.idUser = f.id_followed
+     WHERE f.id_following = ?`,
+    [id],
+    (err, results) => {
+      if (err) {
+        console.log("Error fetching following:", err);
+        return res.status(500).send("Server Error");
+      }
+      res.json(results);
+    }
+  );
+});
 // Same fix applied to other routes
 app.get("/profilevideos", (req, res) => {
   let id = parseInt(req.query.id, 10);
@@ -259,7 +305,30 @@ app.post("/register", (req, res) => {
     });
   });
 });
+// Endpoint để lưu bài viết mới
+app.post("/savePost", (req, res) => {
+  const { idUser, type, url, content } = req.body;
+  if (!idUser || !url) {
+    return res
+      .status(400)
+      .json({ error: "Vui lòng cung cấp idUser, type, url và content." });
+  }
 
+  pool.query(
+    `INSERT INTO Post (idUser, type, url, content, upload_at)
+     VALUES (?, ?, ?, ?, NOW())`,
+    [idUser, "image", url, content],
+    (err, results) => {
+      if (err) {
+        console.error("Lỗi cơ sở dữ liệu:", err);
+        return res
+          .status(500)
+          .json({ error: "Lỗi khi lưu bài viết vào cơ sở dữ liệu." });
+      }
+      res.status(201).json({ message: "Bài viết đã được lưu thành công!" });
+    }
+  );
+});
 // Khởi chạy server
 app.listen(8081, () => {
   console.log("Server running on http://localhost:8081");

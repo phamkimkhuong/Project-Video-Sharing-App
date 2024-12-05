@@ -1,5 +1,5 @@
 import * as React from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useRoute } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,16 +15,41 @@ import { Props } from "../utils/const";
 
 import { PRIMARY_COLOR } from "../utils/const";
 import RegisterScreen from "../screens/RegisterScreen";
+import Following from "../screens/Following";
+import ImageViewScreen from "../components/profile/ImageView";
 
 const Tab = createBottomTabNavigator();
 
 const Stack = createNativeStackNavigator();
 
-const CreateVideoNavigator = () => {
+const CreateVideoNavigator: React.FC<Props> = ({
+  navigation,
+  route,
+}: Props) => {
+  const user = route.params ? route.params.userData : null;
+  // console.error("u111", user);
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Create Video" component={CreateVideoScreen} />
+      <Stack.Screen
+        name="Create Video"
+        initialParams={{ userData: user }}
+        component={CreateVideoScreen}
+      />
       <Stack.Screen name="Editing" component={EditingPage} />
+    </Stack.Navigator>
+  );
+};
+const ProfileNavigator: React.FC<Props> = ({ navigation, route }: Props) => {
+  const user = route.params ? route.params.userData : null;
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen
+        name="Profile"
+        initialParams={{ userData: user }}
+        component={ProfileScreen}
+      />
+      <Stack.Screen name="Following" component={Following} />
+      <Stack.Screen name="ImageView" component={ImageViewScreen} />
     </Stack.Navigator>
   );
 };
@@ -82,13 +107,21 @@ const MainNavigator: React.FC<Props> = ({ navigation, route }: Props) => {
         initialParams={{ userData }}
         component={HomeScreen}
       />
-      <Tab.Screen name="Search" component={SearchScreen} />
-      <Tab.Screen name="Create Video" component={CreateVideoNavigator} />
+      <Tab.Screen
+        name="Search"
+        initialParams={{ userData }}
+        component={SearchScreen}
+      />
+      <Tab.Screen
+        name="Create Video"
+        initialParams={{ userData }}
+        component={CreateVideoNavigator}
+      />
       <Tab.Screen name="Friends" component={FriendsScreen} />
       <Tab.Screen
         name="Profile"
         initialParams={{ userData }}
-        component={ProfileScreen}
+        component={ProfileNavigator}
       />
     </Tab.Navigator>
   );
