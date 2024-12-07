@@ -18,7 +18,7 @@ import RegisterScreen from "../screens/RegisterScreen";
 import Following from "../screens/Following";
 import ImageViewScreen from "../components/profile/ImageView";
 import ImageView from "../screens/imageStreaming";
-import ProfileDetails from "../screens/profiledetails";
+import ProfileDetails from "../screens/Profiledetails";
 
 const Tab = createBottomTabNavigator();
 
